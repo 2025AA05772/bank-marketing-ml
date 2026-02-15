@@ -8,6 +8,7 @@ from sklearn.metrics import (
     f1_score, matthews_corrcoef, ConfusionMatrixDisplay
 )
 import matplotlib.pyplot as plt
+from io import BytesIO
 
 # ----------------------------
 # Streamlit page configuration
@@ -37,6 +38,16 @@ def read_csv_smart(file_bytes: bytes):
         df = pd.read_csv(bio)
     return df
 
+# cached loader for sample test CSV bytes
+
+@st.cache_data(show_spinner=False)
+
+def load_sample_test_bytes(path: str) -> bytes:
+    if not os.path.exists(path):
+        return b""
+    with open(path, "rb") as f:
+        return f.read()
+
 # ----------------------------------------
 # Discover and load available trained models
 # ----------------------------------------
@@ -58,10 +69,22 @@ pipe = load_model_cached(f"model/{model_choice.replace(' ', '_')}.pkl")
 
 
 # -------------------------------------------------
-# Provide a link to a sample test CSV file
+# Sidebar: Download sample test_data.csv
 # -------------------------------------------------
-st.sidebar.markdown("**Download example test file:**")
-st.sidebar.write("https://github.com/2025AA05772/bank-marketing-ml/blob/main/test_data.csv")
+if csv_bytes:
+    st.sidebar.download_button(
+        label="Download test_data.csv",
+        data=csv_bytes,
+        file_name="test_data.csv",
+        mime="text/csv",
+        use_container_width=True
+    )
+else:
+    st.sidebar.warning(
+        "test_data.csv not found in repository root. "
+        "Add it next to app.py to enable downloads."
+    )
+
 
 # ------------------------
 # File upload: test CSV(s)
