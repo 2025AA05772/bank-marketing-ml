@@ -62,9 +62,7 @@ Each model was evaluated on the test set using:
 
 ---
 
-# 4️. Model Comparison Table  
-
-Below are the metrics obtained for the trained models from the notebook:
+# 4. Model Comparison Table  
 
 | **ML Model Name**             | **Accuracy** | **AUC**     | **Precision** | **Recall**  | **F1**      | **MCC**     |
 |-------------------------------|--------------|-------------|----------------|-------------|-------------|-------------|
@@ -72,22 +70,22 @@ Below are the metrics obtained for the trained models from the notebook:
 | **Decision Tree**             | 0.846807     | 0.619170    | 0.321581       | 0.324353    | 0.322961    | 0.236599    |
 | **kNN**                       | 0.895120     | 0.755854    | 0.573059       | 0.270474    | 0.367496    | 0.345084    |
 | **Naive Bayes (Gaussian)**    | 0.804928     | 0.775499    | 0.317178       | 0.634698    | 0.422980    | 0.348985    |
-| **Random Forest (Ensemble)**  | 0.894999     | 0.784402    | 0.567742       | 0.284483    | 0.379038    | 0.352064    |
+| **Random Forest (Ensemble)**  | **0.866837** | **0.812212** | **0.435150**   | **0.610991**| **0.508292**| **0.442149** |
 | **XGBoost (Ensemble)**        | 0.847172     | 0.808920    | 0.391759       | 0.645474    | 0.487586    | 0.421444    |
 
 
 ---
 
-# 5️. Observations on Model Performance 
+# 5. Observations on Model Performance  
 
-| **ML Model Name**            | **Observation about model performance** |
-|------------------------------|------------------------------------------|
-| **Logistic Regression**      | Shows strong overall performance with good recall and balanced precision. Produces stable and interpretable results. |
-| **Decision Tree**            | Lowest AUC and MCC among the models. Tends to overfit and generalizes poorly compared to ensemble methods. |
-| **kNN**                      | High accuracy but low recall. Performs less effectively on high‑dimensional one‑hot encoded data. |
-| **Naive Bayes (Gaussian)**   | Performs reasonably well despite strong independence assumptions. Good recall but lower precision. |
-| **Random Forest (Ensemble)** | Very high accuracy and good precision, but recall is low, indicating bias toward predicting majority class. |
-| **XGBoost (Ensemble)**       | Best overall model with highest AUC and MCC. Strong recall and good balance across metrics. Handles class imbalance effectively. |
+| **Model**                     | **Observation** |
+|------------------------------|------------------|
+| **Logistic Regression**      | Performs consistently with strong recall and balanced precision. Interpretable and stable baseline model. |
+| **Decision Tree**            | Lowest AUC and MCC; shows signs of overfitting due to unconstrained splits. Performs poorly compared to ensemble methods. |
+| **kNN**                      | High accuracy but very low recall. Struggles with high‑dimensional one‑hot encoded data. |
+| **Naive Bayes (Gaussian)**   | Good recall but lower precision; simplifies feature interactions but performs reasonably well. |
+| **Random Forest (Ensemble)** | **Best‑performing model overall with highest AUC, F1, and MCC.** Balanced performance and strong generalization after tuning (`n_estimators=100`, `max_depth=12`). |
+| **XGBoost (Ensemble)**       | Very strong model with competitive AUC and MCC. Good handling of class imbalance and robust performance. |
 
 
 --- 
