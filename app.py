@@ -16,6 +16,27 @@ st.set_page_config(page_title="Bank Marketing — ML Models", layout="centered")
 st.title("Bank Marketing — Classification")
 st.caption("Upload test_data.csv, pick a model, view metrics & confusion matrix. ('duration' is ignored to avoid leakage)")
 
+
+# -------------------------------------------------------------------
+# Add Caching for models and test data parse
+# -------------------------------------------------------------------
+@st.cache_resource(show_spinner=False)
+def load_model_cached(path: str):
+    """Load a trained pipeline (preprocessor + model) from disk once per session."""
+    return joblib.load(path)
+
+@st.cache_data(show_spinner=False)
+def read_csv_smart(file_bytes: bytes):
+    """CSV reader with auto delimiter sniffing, cached by file content bytes."""
+    from io import BytesIO
+    bio = BytesIO(file_bytes)
+    try:
+        df = pd.read_csv(bio, sep=None, engine="python")
+    except Exception:
+        bio.seek(0)
+        df = pd.read_csv(bio)
+    return df
+
 # ----------------------------------------
 # Discover and load available trained models
 # ----------------------------------------
@@ -32,8 +53,9 @@ choices = sorted([m.replace("_", " ")[:-4] for m in model_files])
 # Sidebar control to select which trained model to evaluate
 model_choice = st.sidebar.selectbox("Select a trained model", choices)
 
-# Load the selected model/pipeline with joblib
-pipe = joblib.load(f"model/{model_choice.replace(' ', '_')}.pkl")
+# Load the selected model/pipeline using cached loader
+pipe = load_model_cached(f"model/{model_choice.replace(' ', '_')}.pkl")
+
 
 # -------------------------------------------------
 # Provide a link to a sample test CSV file
@@ -47,12 +69,10 @@ st.sidebar.write("https://github.com/2025AA05772/bank-marketing-ml/blob/main/tes
 uploaded = st.file_uploader("Upload CSV (include 'y' for metrics).", type=['csv'])
 
 if uploaded:
-    #try to auto-detect delimiter ; or ,
-    try:
-        df = pd.read_csv(uploaded, sep=None, engine="python")
-    except Exception:
-        uploaded.seek(0)
-        df = pd.read_csv(uploaded)
+    # read via cached function keyed on file bytes
+    file_bytes = uploaded.getvalue()
+    df = read_csv_smart(file_bytes)
+
 
     # ----------------------------------------------------
     # Normalize target column 'y' if present and categorical
