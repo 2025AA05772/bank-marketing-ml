@@ -71,6 +71,12 @@ pipe = load_model_cached(f"model/{model_choice.replace(' ', '_')}.pkl")
 # -------------------------------------------------
 # Sidebar: Download sample test_data.csv
 # -------------------------------------------------
+
+TEST_CSV_PATH = "test_data.csv"
+csv_bytes = load_sample_test_bytes(TEST_CSV_PATH)
+
+st.sidebar.markdown("**Download example test file:**")
+
 if csv_bytes:
     st.sidebar.download_button(
         label="Download test_data.csv",
